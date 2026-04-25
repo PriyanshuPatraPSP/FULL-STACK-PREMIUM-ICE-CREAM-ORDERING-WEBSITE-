@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>L'Artisan Crème — Handcrafted Ice Cream</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          "surface": "#fff9f0",
+          "surface-dim": "#dfd9d1",
+          "surface-bright": "#fff9f0",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f9f3ea",
+          "surface-container": "#f3ede4",
+          "surface-container-high": "#ede7df",
+          "surface-container-highest": "#e7e2d9",
+          "on-surface": "#1d1b16",
+          "on-surface-variant": "#4f453f",
+          "inverse-surface": "#32302a",
+          "inverse-on-surface": "#f6f0e7",
+          "outline": "#81756e",
+          "outline-variant": "#d2c4bc",
+          "surface-tint": "#705a4c",
+          "primary": "#26170c",
+          "on-primary": "#ffffff",
+          "primary-container": "#3d2b1f",
+          "on-primary-container": "#ac9181",
+          "inverse-primary": "#dec1af",
+          "secondary": "#70585b",
+          "on-secondary": "#ffffff",
+          "secondary-container": "#f8d8db",
+          "on-secondary-container": "#755d5f",
+          "tertiary": "#001f17",
+          "tertiary-container": "#00362a",
+          "on-tertiary-container": "#6ea090",
+          "tertiary-fixed": "#b9eedb",
+          "primary-fixed": "#fbddca",
+          "primary-fixed-dim": "#dec1af",
+          "secondary-fixed": "#fbdbde",
+          "background": "#fff9f0",
+          "on-background": "#1d1b16",
+          "error": "#ba1a1a",
+        },
+        borderRadius: {
+          "sm": "0.25rem",
+          "DEFAULT": "0.5rem",
+          "md": "0.75rem",
+          "lg": "1rem",
+          "xl": "1.5rem",
+          "full": "9999px"
+        },
+        fontFamily: {
+          "serif": ["Noto Serif", "Georgia", "serif"],
+          "sans": ["Plus Jakarta Sans", "sans-serif"],
+        },
+        fontSize: {
+          "headline-xl": ["48px", { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700" }],
+          "headline-lg": ["32px", { lineHeight: "1.3", fontWeight: "600" }],
+          "headline-md": ["24px", { lineHeight: "1.4", fontWeight: "600" }],
+          "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+          "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+          "label-caps": ["12px", { lineHeight: "1.0", letterSpacing: "0.1em", fontWeight: "700" }],
+        },
+        spacing: {
+          "gutter": "24px",
+          "section": "80px",
+        },
+        keyframes: {
+          fadeIn: { "0%": { opacity: 0, transform: "translateY(16px)" }, "100%": { opacity: 1, transform: "translateY(0)" } },
+          slideIn: { "0%": { transform: "translateX(100%)" }, "100%": { transform: "translateX(0)" } },
+          scaleIn: { "0%": { transform: "scale(0.95)", opacity: 0 }, "100%": { transform: "scale(1)", opacity: 1 } },
+          blobPulse: { "0%,100%": { borderRadius: "60% 40% 30% 70%/60% 30% 70% 40%" }, "50%": { borderRadius: "30% 60% 70% 40%/50% 60% 30% 60%" } },
+        },
+        animation: {
+          "fade-in": "fadeIn 0.5s ease both",
+          "slide-in": "slideIn 0.35s cubic-bezier(0.16,1,0.3,1) both",
+          "scale-in": "scaleIn 0.3s ease both",
+          "blob-pulse": "blobPulse 7s ease-in-out infinite",
+        }
+      }
+    }
+  }
+</script>
+<style>
+  * { font-family: "Plus Jakarta Sans", sans-serif; }
+  h1,h2,h3,.font-serif { font-family: "Noto Serif", Georgia, serif; }
+  .texture-overlay {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.025;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+  }
+  .page { display: none; }
+  .page.active { display: block; }
+  .nav-link.active { color: #26170c !important; font-weight: 700; border-bottom: 2px solid #26170c; }
+  .flavor-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .flavor-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(61,43,31,0.12); }
+  .flavor-card.selected { border-color: #26170c !important; }
+  .topping-btn.selected, .sauce-btn.selected { background: #26170c !important; color: #fff !important; border-color: #26170c !important; }
+  .cart-sidebar { transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); }
+  .cart-overlay { transition: opacity 0.3s ease; }
+  .hero-blob { animation: blobPulse 7s ease-in-out infinite; }
+  .dotted-row { border-bottom: 1px dotted rgba(129,117,110,0.3); }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 22px; vertical-align: middle; }
+  .badge { font-family: "Plus Jakarta Sans"; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  @media (max-width: 768px) { .hero-text { font-size: 36px !important; } }
+  .product-img { transition: transform 0.4s ease; }
+  .flavor-card:hover .product-img { transform: scale(1.04); }
+  .btn-primary { background: #26170c; color: #fff; border-radius: 9999px; font-weight: 600; transition: background 0.2s, transform 0.15s; }
+  .btn-primary:hover { background: #3d2b1f; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-outline { border: 1px solid #26170c; color: #26170c; border-radius: 9999px; background: transparent; font-weight: 600; transition: background 0.2s, color 0.2s; }
+  .btn-outline:hover { background: #26170c; color: #fff; }
+  .cart-badge { position: absolute; top: -4px; right: -4px; background: #e84c59; color: #fff; border-radius: 9999px; font-size: 10px; font-weight: 700; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+  .section-fade { animation: fadeIn 0.6s ease both; }
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .quantity-btn { width: 32px; height: 32px; border-radius: 9999px; border: 1px solid rgba(129,117,110,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s; font-size: 18px; }
+  .quantity-btn:hover { background: #f3ede4; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #26170c; color: #fff; border-radius: 9999px; padding: 12px 24px; font-size: 14px; font-weight: 600; z-index: 10000; transition: opacity 0.3s; pointer-events: none; }
+  .hero-img-wrap { border-radius: 40% 60% 55% 45% / 45% 40% 60% 55%; overflow: hidden; animation: blobPulse 8s ease-in-out infinite; }
+</style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col">
+
+<!-- Texture -->
+<div class="texture-overlay" aria-hidden="true"></div>
+
+<!-- NAV -->
+<nav id="main-nav" class="fixed top-0 w-full z-50 bg-[#FDFCF8] border-b border-[#3D2B1F]/10 shadow-[0_4px_20px_rgba(61,43,31,0.05)]">
+  <div class="flex justify-between items-center h-20 px-6 md:px-10 max-w-[1440px] mx-auto">
+    <button onclick="navigate('home')" class="text-2xl font-serif italic font-semibold text-[#3D2B1F] hover:opacity-80 transition-opacity">L'Artisan Crème</button>
+    <div class="hidden md:flex space-x-1 items-center">
+      <button onclick="navigate('catalog')" class="nav-link text-[#3D2B1F]/60 hover:text-[#3D2B1F] transition-colors font-serif text-lg tracking-tight px-4 py-1" data-page="catalog">Catalog</button>
+      <button onclick="navigate('builder')" class="nav-link text-[#3D2B1F]/60 hover:text-[#3D2B1F] transition-colors font-serif text-lg tracking-tight px-4 py-1" data-page="builder">Build a Sundae</button>
+      <button onclick="navigate('story')" class="nav-link text-[#3D2B1F]/60 hover:text-[#3D2B1F] transition-colors font-serif text-lg tracking-tight px-4 py-1" data-page="story">Our Story</button>
+      <button onclick="navigate('locations')" class="nav-link text-[#3D2B1F]/60 hover:text-[#3D2B1F] transition-colors font-serif text-lg tracking-tight px-4 py-1" data-page="locations">Locations</button>
+    </div>
+    <div class="flex items-center gap-3 text-[#3D2B1F]">
+      <button onclick="openCart()" class="relative hover:bg-stone-100 p-2 rounded-full transition-colors">
+        <span class="material-symbols-outlined">shopping_bag</span>
+        <span id="cart-badge" class="cart-badge hidden">0</span>
+      </button>
+      <!-- Mobile menu -->
+      <button onclick="toggleMobileMenu()" class="md:hidden hover:bg-stone-100 p-2 rounded-full transition-colors">
+        <span class="material-symbols-outlined" id="mobile-menu-icon">menu</span>
+      </button>
+    </div>
+  </div>
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-[#3D2B1F]/10 bg-[#FDFCF8]">
+    <div class="flex flex-col px-6 py-4 gap-2">
+      <button onclick="navigate('catalog'); toggleMobileMenu()" class="font-serif text-lg text-left py-2 text-[#3D2B1F]/70 hover:text-[#3D2B1F]">Catalog</button>
+      <button onclick="navigate('builder'); toggleMobileMenu()" class="font-serif text-lg text-left py-2 text-[#3D2B1F]/70 hover:text-[#3D2B1F]">Build a Sundae</button>
+      <button onclick="navigate('story'); toggleMobileMenu()" class="font-serif text-lg text-left py-2 text-[#3D2B1F]/70 hover:text-[#3D2B1F]">Our Story</button>
+      <button onclick="navigate('locations'); toggleMobileMenu()" class="font-serif text-lg text-left py-2 text-[#3D2B1F]/70 hover:text-[#3D2B1F]">Locations</button>
+    </div>
+  </div>
+</nav>
+
+<!-- CART OVERLAY -->
+<div id="cart-overlay" class="cart-overlay fixed inset-0 bg-black/30 z-50 hidden opacity-0" onclick="closeCart()"></div>
+
+<!-- CART SIDEBAR -->
+<aside id="cart-sidebar" class="cart-sidebar fixed top-0 right-0 h-full w-full max-w-[420px] bg-[#FDFCF8] shadow-2xl z-50 translate-x-full flex flex-col">
+  <div class="flex items-center justify-between p-6 border-b border-[#3D2B1F]/10">
+    <h2 class="font-serif text-2xl font-semibold text-primary">Your Cart</h2>
+    <button onclick="closeCart()" class="hover:bg-surface-container p-2 rounded-full transition-colors">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+  <div id="cart-footer" class="p-6 border-t border-[#3D2B1F]/10 hidden">
+    <div class="flex justify-between items-center mb-6">
+      <span class="font-serif text-lg font-semibold text-primary">Total</span>
+      <span id="cart-total" class="font-serif text-2xl font-bold text-primary">$0.00</span>
+    </div>
+    <button onclick="showToast('Order placed! Ready in ~15 mins 🍦'); clearCart()" class="btn-primary w-full py-4 text-base font-semibold">Place Order</button>
+    <p class="text-center text-sm text-on-surface-variant mt-3">Ready for pickup in ~15 minutes</p>
+  </div>
+  <div id="cart-empty" class="flex-1 flex flex-col items-center justify-center text-center p-6">
+    <div class="text-6xl mb-4">🍦</div>
+    <p class="font-serif text-xl font-semibold text-primary mb-2">Your cart is empty</p>
+    <p class="text-on-surface-variant mb-6">Start building your perfect treat</p>
+    <button onclick="closeCart(); navigate('catalog')" class="btn-primary px-8 py-3">Explore Flavors</button>
+  </div>
+</aside>
+
+<!-- TOAST -->
+<div id="toast" class="toast opacity-0"></div>
+
+<!-- ===================== PAGE: HOME ===================== -->
+<div id="page-home" class="page active">
+  <!-- HERO -->
+  <section class="relative min-h-screen flex items-center overflow-hidden pt-20">
+    <div class="absolute inset-0 bg-gradient-to-br from-[#fff9f0] via-[#fdf3e7] to-[#f5e6d3]"></div>
+    <!-- Decorative blobs -->
+    <div class="absolute top-24 right-1/4 w-96 h-96 bg-secondary-fixed/40 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 left-1/3 w-64 h-64 bg-tertiary-fixed/30 rounded-full blur-2xl"></div>
+    <div class="absolute top-40 left-10 w-48 h-48 bg-primary-fixed/30 rounded-full blur-2xl"></div>
+
+    <div class="relative max-w-[1440px] mx-auto px-6 md:px-12 w-full grid grid-cols-1 md:grid-cols-12 gap-12 items-center py-16">
+      <div class="md:col-span-6 section-fade">
+        <span class="badge text-secondary mb-6 block">Handcrafted in Small Batches</span>
+        <h1 class="font-serif text-headline-xl text-primary leading-tight mb-6 hero-text">
+          The Finest<br/><em>Artisan</em><br/>Ice Cream.
+        </h1>
+        <p class="text-body-lg text-on-surface-variant max-w-lg mb-10">Slow-churned from locally sourced dairy. Infused with ingredients from Madagascar, Tahiti & beyond. Every scoop tells a story of pure craftsmanship.</p>
+        <div class="flex flex-wrap gap-4">
+          <button onclick="navigate('catalog')" class="btn-primary px-10 py-4 text-base">Explore Flavors</button>
+          <button onclick="navigate('builder')" class="btn-outline px-10 py-4 text-base">Build a Sundae</button>
+        </div>
+        <div class="flex items-center gap-8 mt-12">
+          <div class="text-center">
+            <div class="font-serif text-3xl font-bold text-primary">24</div>
+            <div class="text-sm text-on-surface-variant">Rotating Flavors</div>
+          </div>
+          <div class="w-px h-12 bg-outline-variant"></div>
+          <div class="text-center">
+            <div class="font-serif text-3xl font-bold text-primary">100%</div>
+            <div class="text-sm text-on-surface-variant">Natural Ingredients</div>
+          </div>
+          <div class="w-px h-12 bg-outline-variant"></div>
+          <div class="text-center">
+            <div class="font-serif text-3xl font-bold text-primary">3</div>
+            <div class="text-sm text-on-surface-variant">Locations</div>
+          </div>
+        </div>
+      </div>
+      <div class="md:col-span-6 flex justify-center items-center section-fade stagger-2">
+        <div class="relative w-full max-w-[480px]">
+          <div class="hero-img-wrap w-full aspect-square">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7xhlebOEDbToesI58uj3ziolDXhxQN9XxW1Y05OCddcQjoRSdHdO-XqUPMNBQPyHZ09IhjMJww66Jaawaco2Mi6aUd4d4zqpwfMzgTAzWb5DOjaGz2N5XLtr0iSMQZSgJ0kIKnBnJjq9u7eVQgLR7Zkwy7VBle_IzVGfJ43WhuOpQSanfrzRBKSIzkBfqNBf1lDcgOQiQyu2LC8Jy_Ej2o45Iy9FTLQ_GclauKWsXbyWNbPVQYC4MFzV4KEVD9EFakvp3CrGENYw" alt="Artisan ice cream" class="w-full h-full object-cover"/>
+          </div>
+          <!-- Floating tags -->
+          <div class="absolute -top-4 -left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-[#3D2B1F]/10 section-fade stagger-3">
+            <span class="text-sm font-semibold text-primary">✦ Small Batch</span>
+          </div>
+          <div class="absolute -bottom-4 -right-4 bg-secondary-container px-4 py-2 rounded-full shadow-lg section-fade stagger-4">
+            <span class="text-sm font-semibold text-on-secondary-container">🌿 All Natural</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-on-surface-variant/50 animate-bounce">
+      <span class="text-xs tracking-widest font-semibold uppercase">Scroll</span>
+      <span class="material-symbols-outlined text-sm">arrow_downward</span>
+    </div>
+  </section>
+
+  <!-- FEATURED FLAVORS -->
+  <section class="py-section bg-surface-container-low">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+        <div>
+          <span class="badge text-secondary block mb-3">This Season's Picks</span>
+          <h2 class="font-serif text-headline-lg text-primary">Featured Flavors</h2>
+        </div>
+        <button onclick="navigate('catalog')" class="btn-outline px-6 py-2 mt-4 md:mt-0 flex items-center gap-2 w-fit">
+          View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="flavor-card bg-white rounded-xl overflow-hidden cursor-pointer shadow-sm" onclick="navigate('product', {id:'vanilla'})">
+          <div class="aspect-[4/3] overflow-hidden bg-surface-container">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwJBEQWyuldkR0ppx3eyAx5CIZilyRjRm8KJKtiScyR-j29-kW_-A8PDK43xaywC75EgwQODQXJPHJwTX8CMDHdAZEFAzMx_gY8_0KMondnfaGolzKOFG1sUMeS2gGt1ZEKCB2THW4JLW2sqvY3_xe54mnYJB1DKYowRQNQMgrioHfOmQM8u8oQm52gyHeTx5Ov8p_cBPfwysdEOFe9y412AOj9rBJ5jqEudTuopkViymPTXOOfGLqDrdoi8mGOVVScVUDhM1vVRM" alt="Vanilla Bean" class="product-img w-full h-full object-cover"/>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-3 h-3 rounded-full bg-[#f5e6c8] border border-[#d4b896] inline-block"></span>
+              <span class="badge text-secondary-container bg-secondary-fixed px-2 py-0.5 rounded-full">Signature</span>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-primary mb-1">Madagascar Vanilla Bean</h3>
+            <p class="text-sm text-on-surface-variant mb-4">Classic bean, rich & floral finish</p>
+            <div class="flex items-center justify-between">
+              <span class="font-serif text-lg font-semibold text-primary">$6.50</span>
+              <button onclick="event.stopPropagation(); addToCart({id:'vanilla',name:'Madagascar Vanilla Bean',price:6.50,color:'#f5e6c8'})" class="btn-primary px-4 py-2 text-sm">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flavor-card bg-white rounded-xl overflow-hidden cursor-pointer shadow-sm" onclick="navigate('product', {id:'chocolate'})">
+          <div class="aspect-[4/3] overflow-hidden bg-surface-container">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIPSl0bis_2zlvf6GeE7v8P02DLAnrsdTT2MnBkLMWHp5m7CiIHcPGC2Vdi4n3QUBNDyb0TKIMHAk0TtDhayIm8oKLTUlQw-XwrP9MPu9udza_9s0D_NYE_b3myrl78peV-Ne1c2Yfe49Q0zy8fbJRodKvSSR0tJBGLqgEacwwoTTkkddDXwk5SfSDFHJ1a3xrAFMdj3p9g_MBRWpnieLSzfNIa-hN2fo-VyNBTGVUaqB2p2TFrmtSGpbGquUP35BIJEIiK_-3ltY" alt="Dark Chocolate" class="product-img w-full h-full object-cover"/>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-3 h-3 rounded-full bg-[#3b2518] inline-block"></span>
+              <span class="badge text-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded-full">Bestseller</span>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-primary mb-1">Valrhona Dark Chocolate</h3>
+            <p class="text-sm text-on-surface-variant mb-4">70% cacao, deep & bittersweet</p>
+            <div class="flex items-center justify-between">
+              <span class="font-serif text-lg font-semibold text-primary">$7.00</span>
+              <button onclick="event.stopPropagation(); addToCart({id:'chocolate',name:'Valrhona Dark Chocolate',price:7.00,color:'#3b2518'})" class="btn-primary px-4 py-2 text-sm">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flavor-card bg-white rounded-xl overflow-hidden cursor-pointer shadow-sm" onclick="navigate('product', {id:'strawberry'})">
+          <div class="aspect-[4/3] overflow-hidden bg-surface-container">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArN3odi0oq6gtGKvy1zn6Kzk9rLbdDr-C7jkZqe9gxwZ_25INPY17lOmDRR-DQ82GRup3SMyVXXWflM-q-HkbzeiuwftNy_cDCAT6v7FO7f41OwpASIeCx0QDNI2aX66-XeD_ZitWkDKeYlMyW4_Js-waeue3W8plUEGufTj0_jpFYRudsCO-Ay8x2dovu6YsGUqHiayKArDbSARlPPBaPsvjaq3wGBk7ToBgysTLuf2t0ymhxWv6oXvwuy7ynthnQVHs14mo48ZY" alt="Wild Strawberry" class="product-img w-full h-full object-cover"/>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-3 h-3 rounded-full bg-[#f8a0a8] inline-block"></span>
+              <span class="badge text-on-secondary-container bg-secondary-fixed px-2 py-0.5 rounded-full">Seasonal</span>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-primary mb-1">Wild Strawberry</h3>
+            <p class="text-sm text-on-surface-variant mb-4">Roasted berries, sweet cream finish</p>
+            <div class="flex items-center justify-between">
+              <span class="font-serif text-lg font-semibold text-primary">$6.50</span>
+              <button onclick="event.stopPropagation(); addToCart({id:'strawberry',name:'Wild Strawberry',price:6.50,color:'#f8a0a8'})" class="btn-primary px-4 py-2 text-sm">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flavor-card bg-white rounded-xl overflow-hidden cursor-pointer shadow-sm" onclick="navigate('product', {id:'pistachio'})">
+          <div class="aspect-[4/3] overflow-hidden bg-surface-container flex items-center justify-center" style="background: linear-gradient(135deg, #c8e6c2 0%, #a5d49e 100%)">
+            <span style="font-size:80px">🍦</span>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-3 h-3 rounded-full bg-[#7cb87a] inline-block"></span>
+              <span class="badge text-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded-full">New</span>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-primary mb-1">Sicilian Pistachio</h3>
+            <p class="text-sm text-on-surface-variant mb-4">Bronte pistachios, toasted & earthy</p>
+            <div class="flex items-center justify-between">
+              <span class="font-serif text-lg font-semibold text-primary">$7.50</span>
+              <button onclick="event.stopPropagation(); addToCart({id:'pistachio',name:'Sicilian Pistachio',price:7.50,color:'#7cb87a'})" class="btn-primary px-4 py-2 text-sm">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUR STORY TEASER -->
+  <section class="py-section">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+      <div class="md:col-span-6 order-2 md:order-1">
+        <div class="relative">
+          <div class="rounded-xl overflow-hidden aspect-[4/3]">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7xSzymlNnmJryGzXR_V3yXl7o8yw6EWuipDippJC4pSM7maGxTdi-yV4wrIAuQNOi5wSOBLrwvtDm42S9iMfhVNqk_VX94QMuQ78Ypz70PbrOVnTgDp3ZBtgLAYC3iRZWH97quwP--wAg1QkTtm1fOMFdY6hoXKzis458eTEwUTeooOyUywvicATZsKDKrXeUy95ozxzEVaKvbs-NfIgzAlp4JMyw6nBoiaaqXw9_M1C1hfFfZoTZ_w6L3kMCRuM8pAibWFFSILY" alt="Artisan sundae" class="w-full h-full object-cover"/>
+          </div>
+          <div class="absolute -bottom-6 -right-6 bg-primary-fixed rounded-xl p-5 shadow-lg max-w-[200px]">
+            <div class="font-serif text-4xl font-bold text-primary mb-1">12</div>
+            <div class="text-sm text-on-surface-variant">Years of craft & passion</div>
+          </div>
+        </div>
+      </div>
+      <div class="md:col-span-5 md:col-start-8 order-1 md:order-2">
+        <span class="badge text-secondary block mb-4">Pure Ingredients</span>
+        <h2 class="font-serif text-headline-lg text-primary mb-6">Sourced with Purpose.</h2>
+        <p class="text-body-md text-on-surface-variant mb-5">We believe extraordinary ice cream begins with extraordinary ingredients. Our dairy is sourced from local, pasture-raised cows, our vanilla beans hand-selected from sustainable farms in Madagascar.</p>
+        <p class="text-body-md text-on-surface-variant mb-8">Every scoop tells a story of dedication to craft — balancing traditional French techniques with bold, modern flavor profiles.</p>
+        <button onclick="navigate('story')" class="btn-outline px-8 py-3 flex items-center gap-2 w-fit">
+          Read Our Story <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILD A SUNDAE CTA -->
+  <section class="py-section bg-primary-container">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
+      <div>
+        <h2 class="font-serif text-headline-lg text-on-primary-container mb-3">Build Your Perfect Sundae</h2>
+        <p class="text-on-primary-container/70 max-w-xl">Choose your scoops, sauce, and toppings. Layer by layer, craft your masterpiece and order for pickup.</p>
+      </div>
+      <button onclick="navigate('builder')" class="bg-primary-fixed text-primary rounded-full px-10 py-4 font-semibold text-base hover:bg-primary-fixed-dim transition-colors shrink-0">
+        Start Building
+      </button>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="py-section bg-surface-container-low">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div class="text-center mb-12">
+        <span class="badge text-secondary block mb-3">From Our Guests</span>
+        <h2 class="font-serif text-headline-lg text-primary">Pure Bliss, Every Scoop</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl p-7 shadow-sm">
+          <div class="flex gap-1 mb-4">
+            <span class="text-yellow-400 text-lg">★★★★★</span>
+          </div>
+          <p class="text-on-surface-variant italic mb-6">"The Madagascar Vanilla is unlike anything I've had before. Floral, complex, and impossibly creamy. I drove 45 minutes just to come back."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center font-semibold text-secondary">S</div>
+            <div>
+              <div class="font-semibold text-primary text-sm">Sophie L.</div>
+              <div class="text-xs text-on-surface-variant">Paris, FR</div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-7 shadow-sm">
+          <div class="flex gap-1 mb-4">
+            <span class="text-yellow-400 text-lg">★★★★★</span>
+          </div>
+          <p class="text-on-surface-variant italic mb-6">"The sundae builder is genius. I made a dark chocolate and salted caramel combination that made my entire week. The cacao nibs were the perfect touch."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center font-semibold text-tertiary">M</div>
+            <div>
+              <div class="font-semibold text-primary text-sm">Marcus T.</div>
+              <div class="text-xs text-on-surface-variant">New York, US</div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-7 shadow-sm">
+          <div class="flex gap-1 mb-4">
+            <span class="text-yellow-400 text-lg">★★★★★</span>
+          </div>
+          <p class="text-on-surface-variant italic mb-6">"Sicilian Pistachio changed my life. The depth of flavor and the creaminess is extraordinary. This is what artisan means."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center font-semibold text-primary">A</div>
+            <div>
+              <div class="font-semibold text-primary text-sm">Anya K.</div>
+              <div class="text-xs text-on-surface-variant">London, UK</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== PAGE: CATALOG ===================== -->
+<div id="page-catalog" class="page pt-20">
+  <div class="max-w-[1440px] mx-auto px-6 md:px-12 py-16">
+    <div class="text-center mb-12 section-fade">
+      <span class="badge text-secondary block mb-3">24 Rotating Flavors</span>
+      <h1 class="font-serif text-headline-xl text-primary mb-4">Our Flavor Catalog</h1>
+      <p class="text-body-lg text-on-surface-variant max-w-2xl mx-auto">Small-batch, slow-churned artisan ice cream made with the finest ingredients from around the world.</p>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="flex flex-wrap gap-3 justify-center mb-12">
+      <button onclick="filterCatalog('all')" class="filter-chip btn-primary px-5 py-2 text-sm" data-filter="all">All Flavors</button>
+      <button onclick="filterCatalog('classic')" class="filter-chip btn-outline px-5 py-2 text-sm" data-filter="classic">Classic</button>
+      <button onclick="filterCatalog('seasonal')" class="filter-chip btn-outline px-5 py-2 text-sm" data-filter="seasonal">Seasonal</button>
+      <button onclick="filterCatalog('vegan')" class="filter-chip btn-outline px-5 py-2 text-sm" data-filter="vegan">Vegan</button>
+      <button onclick="filterCatalog('signature')" class="filter-chip btn-outline px-5 py-2 text-sm" data-filter="signature">Signature</button>
+    </div>
+
+    <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: PRODUCT ===================== -->
+<div id="page-product" class="page pt-20">
+  <div class="max-w-[1440px] mx-auto px-6 md:px-12 py-16">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
+      <button onclick="navigate('catalog')" class="hover:text-primary transition-colors">Catalog</button>
+      <span class="material-symbols-outlined" style="font-size:14px">chevron_right</span>
+      <span id="product-breadcrumb" class="text-primary font-semibold"></span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <!-- Images -->
+      <div class="lg:col-span-6">
+        <div class="rounded-2xl overflow-hidden aspect-square bg-surface-container mb-4">
+          <img id="product-main-img" src="" alt="" class="w-full h-full object-cover"/>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="rounded-xl overflow-hidden aspect-square bg-surface-container-high opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
+            <img id="product-thumb-1" src="" alt="" class="w-full h-full object-cover"/>
+          </div>
+          <div class="rounded-xl overflow-hidden aspect-square bg-surface-container-high opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
+            <img id="product-thumb-2" src="" alt="" class="w-full h-full object-cover"/>
+          </div>
+          <div class="rounded-xl overflow-hidden aspect-square bg-surface-container-high flex items-center justify-center">
+            <span class="text-4xl" id="product-thumb-emoji">🍦</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="lg:col-span-5 lg:col-start-8">
+        <div class="flex items-center gap-3 mb-4">
+          <span id="product-badge" class="badge bg-secondary-fixed text-on-secondary-container px-3 py-1 rounded-full"></span>
+          <span id="product-color-dot" class="w-4 h-4 rounded-full inline-block border border-outline-variant/50"></span>
+        </div>
+        <h1 id="product-name" class="font-serif text-headline-xl text-primary mb-4"></h1>
+        <p id="product-desc" class="text-body-lg text-on-surface-variant mb-6"></p>
+
+        <!-- Tasting notes -->
+        <div class="bg-surface-container rounded-xl p-6 mb-6">
+          <h3 class="font-serif text-lg font-semibold text-primary mb-4">Tasting Notes</h3>
+          <div id="product-notes" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Details -->
+        <div class="space-y-3 mb-8">
+          <div class="flex justify-between dotted-row pb-3">
+            <span class="text-on-surface-variant">Origin</span>
+            <span id="product-origin" class="font-semibold text-primary"></span>
+          </div>
+          <div class="flex justify-between dotted-row pb-3">
+            <span class="text-on-surface-variant">Batch Size</span>
+            <span class="font-semibold text-primary">12 litres</span>
+          </div>
+          <div class="flex justify-between pb-3">
+            <span class="text-on-surface-variant">Fat Content</span>
+            <span class="font-semibold text-primary">16% — Luxury Grade</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-6">
+          <span id="product-price" class="font-serif text-3xl font-bold text-primary"></span>
+          <div class="flex items-center gap-3">
+            <button onclick="changeProductQty(-1)" class="quantity-btn">−</button>
+            <span id="product-qty" class="font-semibold text-primary w-8 text-center">1</span>
+            <button onclick="changeProductQty(1)" class="quantity-btn">+</button>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button id="product-add-btn" onclick="addCurrentProduct()" class="btn-primary flex-1 py-4 text-base flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined">shopping_bag</span> Add to Cart
+          </button>
+          <button onclick="navigate('builder')" class="btn-outline py-4 px-6 flex items-center gap-2 text-sm">
+            <span class="material-symbols-outlined">build</span> Sundae
+          </button>
+        </div>
+
+        <p class="text-sm text-on-surface-variant text-center mt-4">Available for pickup in ~15 minutes</p>
+      </div>
+    </div>
+
+    <!-- Related -->
+    <div class="mt-20">
+      <h2 class="font-serif text-headline-md text-primary mb-8">You Might Also Like</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-5" id="related-products"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: BUILDER ===================== -->
+<div id="page-builder" class="page pt-20">
+  <div class="max-w-[1440px] mx-auto px-6 md:px-12 py-16">
+    <div class="text-center mb-16 section-fade">
+      <span class="badge text-secondary block mb-3">Your Creation</span>
+      <h1 class="font-serif text-headline-xl text-primary mb-4">Build Your Masterpiece</h1>
+      <p class="text-body-lg text-on-surface-variant max-w-2xl mx-auto">Layer by layer, craft your perfect artisanal sundae. Start with small-batch ice creams and finish with house-made confections.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <!-- Steps -->
+      <div class="lg:col-span-7 space-y-14">
+
+        <!-- Step 1: Scoops -->
+        <section class="section-fade">
+          <div class="flex items-center mb-8">
+            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm mr-4 shrink-0">1</div>
+            <h2 class="font-serif text-headline-lg text-primary">Choose Your Scoops</h2>
+            <span class="ml-auto text-sm text-on-surface-variant italic">Up to 3 scoops</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div class="flavor-card rounded-xl overflow-hidden cursor-pointer border-2 border-transparent bg-surface-container p-4" onclick="toggleScoop(this,'Madagascar Vanilla',4.00,'#f5e6c8')">
+              <div class="aspect-square rounded-lg overflow-hidden mb-3"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwJBEQWyuldkR0ppx3eyAx5CIZilyRjRm8KJKtiScyR-j29-kW_-A8PDK43xaywC75EgwQODQXJPHJwTX8CMDHdAZEFAzMx_gY8_0KMondnfaGolzKOFG1sUMeS2gGt1ZEKCB2THW4JLW2sqvY3_xe54mnYJB1DKYowRQNQMgrioHfOmQM8u8oQm52gyHeTx5Ov8p_cBPfwysdEOFe9y412AOj9rBJ5jqEudTuopkViymPTXOOfGLqDrdoi8mGOVVScVUDhM1vVRM" alt="Vanilla" class="product-img w-full h-full object-cover"/></div>
+              <h3 class="font-serif text-base font-semibold text-primary">Madagascar Vanilla</h3>
+              <p class="text-xs text-on-surface-variant mt-1">Classic bean, rich finish</p>
+            </div>
+            <div class="flavor-card rounded-xl overflow-hidden cursor-pointer border-2 border-transparent bg-surface-container p-4" onclick="toggleScoop(this,'Valrhona Chocolate',4.50,'#3b2518')">
+              <div class="aspect-square rounded-lg overflow-hidden mb-3"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIPSl0bis_2zlvf6GeE7v8P02DLAnrsdTT2MnBkLMWHp5m7CiIHcPGC2Vdi4n3QUBNDyb0TKIMHAk0TtDhayIm8oKLTUlQw-XwrP9MPu9udza_9s0D_NYE_b3myrl78peV-Ne1c2Yfe49Q0zy8fbJRodKvSSR0tJBGLqgEacwwoTTkkddDXwk5SfSDFHJ1a3xrAFMdj3p9g_MBRWpnieLSzfNIa-hN2fo-VyNBTGVUaqB2p2TFrmtSGpbGquUP35BIJEIiK_-3ltY" alt="Chocolate" class="product-img w-full h-full object-cover"/></div>
+              <h3 class="font-serif text-base font-semibold text-primary">Valrhona Chocolate</h3>
+              <p class="text-xs text-on-surface-variant mt-1">70% cacao, deep cocoa</p>
+            </div>
+            <div class="flavor-card rounded-xl overflow-hidden cursor-pointer border-2 border-transparent bg-surface-container p-4" onclick="toggleScoop(this,'Wild Strawberry',4.00,'#f8a0a8')">
+              <div class="aspect-square rounded-lg overflow-hidden mb-3"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArN3odi0oq6gtGKvy1zn6Kzk9rLbdDr-C7jkZqe9gxwZ_25INPY17lOmDRR-DQ82GRup3SMyVXXWflM-q-HkbzeiuwftNy_cDCAT6v7FO7f41OwpASIeCx0QDNI2aX66-XeD_ZitWkDKeYlMyW4_Js-waeue3W8plUEGufTj0_jpFYRudsCO-Ay8x2dovu6YsGUqHiayKArDbSARlPPBaPsvjaq3wGBk7ToBgysTLuf2t0ymhxWv6oXvwuy7ynthnQVHs14mo48ZY" alt="Strawberry" class="product-img w-full h-full object-cover"/></div>
+              <h3 class="font-serif text-base font-semibold text-primary">Wild Strawberry</h3>
+              <p class="text-xs text-on-surface-variant mt-1">Roasted berries, cream</p>
+            </div>
+            <div class="flavor-card rounded-xl overflow-hidden cursor-pointer border-2 border-transparent bg-surface-container p-4" onclick="toggleScoop(this,'Sicilian Pistachio',4.50,'#7cb87a')">
+              <div class="aspect-square rounded-lg overflow-hidden mb-3 bg-gradient-to-br from-[#c8e6c2] to-[#a5d49e] flex items-center justify-center"><span style="font-size:48px">🍦</span></div>
+              <h3 class="font-serif text-base font-semibold text-primary">Sicilian Pistachio</h3>
+              <p class="text-xs text-on-surface-variant mt-1">Bronte nuts, toasted</p>
+            </div>
+            <div class="flavor-card rounded-xl overflow-hidden cursor-pointer border-2 border-transparent bg-surface-container p-4" onclick="toggleScoop(this,'Salted Caramel',4.00,'#d69f5c')">
+              <div class="aspect-square rounded-lg overflow-hidden mb-3 bg-gradient-to-br from-[#f5d08a] to-[#c8842a] flex items-center justify-center"><span style="font-size:48px">🍨</span></div>
+              <h3 class="font-serif text-base font-semibold text-primary">Salted Caramel</h3>
+              <p class="text-xs text-on-surface-variant mt-1">Fleur de sel, butterscotch</p>
+            </div>
+            <div class="flavor-card rounded-xl overflow-hidden cursor-pointer border-2 border-transparent bg-surface-container p-4" onclick="toggleScoop(this,'Tahitian Coconut',4.00,'#f5f5e0')">
+              <div class="aspect-square rounded-lg overflow-hidden mb-3 bg-gradient-to-br from-[#f0f5d8] to-[#e0eba0] flex items-center justify-center"><span style="font-size:48px">🥥</span></div>
+              <h3 class="font-serif text-base font-semibold text-primary">Tahitian Coconut</h3>
+              <p class="text-xs text-on-surface-variant mt-1">Toasted flake, tropical</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="w-full h-px bg-outline-variant/30"></div>
+
+        <!-- Step 2: Sauce -->
+        <section class="section-fade stagger-1">
+          <div class="flex items-center mb-8">
+            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm mr-4 shrink-0">2</div>
+            <h2 class="font-serif text-headline-lg text-primary">Drizzle & Sauce</h2>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <button class="sauce-btn py-5 px-3 rounded-xl border border-outline-variant bg-surface hover:bg-surface-container-low transition-colors text-center" onclick="selectSauce(this,'Hot Fudge',1.50)">
+              <div class="w-12 h-12 rounded-full bg-[#3b2518] mx-auto mb-3"></div>
+              <span class="text-sm font-semibold text-primary block">Hot Fudge</span>
+              <span class="text-xs text-on-surface-variant">+$1.50</span>
+            </button>
+            <button class="sauce-btn py-5 px-3 rounded-xl border border-outline-variant bg-surface hover:bg-surface-container-low transition-colors text-center" onclick="selectSauce(this,'Salted Caramel',1.50)">
+              <div class="w-12 h-12 rounded-full bg-[#d69f5c] mx-auto mb-3"></div>
+              <span class="text-sm font-semibold text-primary block">Salted Caramel</span>
+              <span class="text-xs text-on-surface-variant">+$1.50</span>
+            </button>
+            <button class="sauce-btn py-5 px-3 rounded-xl border border-outline-variant bg-surface hover:bg-surface-container-low transition-colors text-center" onclick="selectSauce(this,'Berry Coulis',1.00)">
+              <div class="w-12 h-12 rounded-full bg-[#e84c59] mx-auto mb-3"></div>
+              <span class="text-sm font-semibold text-primary block">Berry Coulis</span>
+              <span class="text-xs text-on-surface-variant">+$1.00</span>
+            </button>
+            <button class="sauce-btn py-5 px-3 rounded-xl border border-outline-variant bg-surface hover:bg-surface-container-low transition-colors text-center" onclick="selectSauce(this,'None',0)">
+              <div class="w-12 h-12 rounded-full bg-[#f4e2d2] border border-outline-variant mx-auto mb-3"></div>
+              <span class="text-sm font-semibold text-primary block">No Sauce</span>
+              <span class="text-xs text-on-surface-variant">Free</span>
+            </button>
+          </div>
+        </section>
+
+        <div class="w-full h-px bg-outline-variant/30"></div>
+
+        <!-- Step 3: Toppings -->
+        <section class="section-fade stagger-2">
+          <div class="flex items-center mb-8">
+            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm mr-4 shrink-0">3</div>
+            <h2 class="font-serif text-headline-lg text-primary">Artisanal Toppings</h2>
+            <span class="ml-auto text-sm text-on-surface-variant italic">Choose any</span>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <button class="topping-btn px-6 py-2.5 rounded-full border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-semibold" onclick="toggleTopping(this,'Toasted Almonds',1.00)">Toasted Almonds</button>
+            <button class="topping-btn px-6 py-2.5 rounded-full border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-semibold" onclick="toggleTopping(this,'Fresh Berries',1.50)">Fresh Berries</button>
+            <button class="topping-btn px-6 py-2.5 rounded-full border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-semibold" onclick="toggleTopping(this,'Cacao Nibs',1.00)">Cacao Nibs</button>
+            <button class="topping-btn px-6 py-2.5 rounded-full border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-semibold" onclick="toggleTopping(this,'Sea Salt Flakes',0.50)">Sea Salt Flakes</button>
+            <button class="topping-btn px-6 py-2.5 rounded-full border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-semibold" onclick="toggleTopping(this,'Chantilly Cream',1.00)">Chantilly Cream</button>
+            <button class="topping-btn px-6 py-2.5 rounded-full border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-semibold" onclick="toggleTopping(this,'Edible Gold Leaf',2.00)">Edible Gold Leaf</button>
+            <button class="topping-btn px-6 py-2.5 rounded-full border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-semibold" onclick="toggleTopping(this,'Honeycomb',1.50)">Honeycomb</button>
+            <button class="topping-btn px-6 py-2.5 rounded-full border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm font-semibold" onclick="toggleTopping(this,'Crushed Meringue',1.00)">Crushed Meringue</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="lg:col-span-5">
+        <div class="sticky top-28 bg-white rounded-2xl p-8 shadow-[0_8px_30px_rgba(61,43,31,0.08)] border border-surface-container-high">
+          <h3 class="font-serif text-xl font-semibold text-primary mb-6 text-center border-b border-outline-variant/20 pb-4">Your Creation</h3>
+
+          <!-- Preview -->
+          <div class="aspect-[4/5] bg-surface-container rounded-xl mb-6 overflow-hidden relative">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7xSzymlNnmJryGzXR_V3yXl7o8yw6EWuipDippJC4pSM7maGxTdi-yV4wrIAuQNOi5wSOBLrwvtDm42S9iMfhVNqk_VX94QMuQ78Ypz70PbrOVnTgDp3ZBtgLAYC3iRZWH97quwP--wAg1QkTtm1fOMFdY6hoXKzis458eTEwUTeooOyUywvicATZsKDKrXeUy95ozxzEVaKvbs-NfIgzAlp4JMyw6nBoiaaqXw9_M1C1hfFfZoTZ_w6L3kMCRuM8pAibWFFSILY" alt="Sundae preview" class="w-full h-full object-cover"/>
+            <div id="builder-tags" class="absolute inset-0 p-4 flex flex-col justify-between pointer-events-none"></div>
+          </div>
+
+          <!-- Line items -->
+          <div id="builder-receipt" class="space-y-3 mb-6 min-h-[80px]">
+            <p class="text-sm text-on-surface-variant text-center italic">Select your scoops to begin...</p>
+          </div>
+
+          <div class="flex justify-between items-center border-t border-outline-variant/30 pt-4 mb-6">
+            <span class="font-serif text-lg font-semibold text-primary">Total</span>
+            <span id="builder-total" class="font-serif text-2xl font-bold text-primary">$0.00</span>
+          </div>
+
+          <button onclick="addSundaeToCart()" class="btn-primary w-full py-4 text-base font-semibold">
+            Add Sundae to Cart
+          </button>
+          <p class="text-center text-sm text-on-surface-variant mt-3">Ready in ~10 minutes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: STORY ===================== -->
+<div id="page-story" class="page pt-20">
+  <div class="max-w-[1440px] mx-auto px-6 md:px-12 py-16">
+    <div class="max-w-4xl mx-auto">
+      <span class="badge text-secondary block mb-4">Est. 2012, Paris</span>
+      <h1 class="font-serif text-headline-xl text-primary mb-8 leading-tight">A Love Letter<br/>to Ice Cream.</h1>
+
+      <div class="rounded-2xl overflow-hidden aspect-video mb-12">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7xhlebOEDbToesI58uj3ziolDXhxQN9XxW1Y05OCddcQjoRSdHdO-XqUPMNBQPyHZ09IhjMJww66Jaawaco2Mi6aUd4d4zqpwfMzgTAzWb5DOjaGz2N5XLtr0iSMQZSgJ0kIKnBnJjq9u7eVQgLR7Zkwy7VBle_IzVGfJ43WhuOpQSanfrzRBKSIzkBfqNBf1lDcgOQiQyu2LC8Jy_Ej2o45Iy9FTLQ_GclauKWsXbyWNbPVQYC4MFzV4KEVD9EFakvp3CrGENYw" alt="Story" class="w-full h-full object-cover"/>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+        <div>
+          <h2 class="font-serif text-headline-md text-primary mb-4">The Beginning</h2>
+          <p class="text-body-md text-on-surface-variant mb-4">L'Artisan Crème was born from a simple obsession: the perfect scoop. Founder Marie Dumont spent six years traveling through Italy, France, and Japan — learning the ancient art of gelato, glace, and kakigori before returning to Paris with a vision.</p>
+          <p class="text-body-md text-on-surface-variant">Her first small shop opened in Le Marais in 2012, and within a month, there was a queue down the block every morning. The secret? Radical simplicity — the finest ingredients, the slowest churning, and zero shortcuts.</p>
+        </div>
+        <div>
+          <h2 class="font-serif text-headline-md text-primary mb-4">Our Philosophy</h2>
+          <p class="text-body-md text-on-surface-variant mb-4">We believe that great ice cream is a form of meditation. Every flavor we create goes through at least 40 iterations before it reaches you. We taste blindly, we adjust obsessively, and we never rush.</p>
+          <p class="text-body-md text-on-surface-variant">Our dairy comes from a 200-acre farm in Normandy. Our vanilla beans are hand-selected in Madagascar by the same family for 10 years. Our pistachios come from a single grove in Bronte, Sicily.</p>
+        </div>
+      </div>
+
+      <div class="bg-primary-container rounded-2xl p-10 text-center mb-16">
+        <blockquote class="font-serif text-2xl italic text-on-primary-container leading-relaxed mb-4">
+          "Ice cream is not just dessert. It is memory, joy, and the quiet luxury of the present moment."
+        </blockquote>
+        <cite class="text-on-primary-container/70 text-sm">— Marie Dumont, Founder</cite>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div class="bg-surface-container rounded-xl p-6">
+          <div class="font-serif text-4xl font-bold text-primary mb-2">12</div>
+          <div class="text-sm text-on-surface-variant">Years of craft</div>
+        </div>
+        <div class="bg-surface-container rounded-xl p-6">
+          <div class="font-serif text-4xl font-bold text-primary mb-2">24</div>
+          <div class="text-sm text-on-surface-variant">Rotating flavors</div>
+        </div>
+        <div class="bg-surface-container rounded-xl p-6">
+          <div class="font-serif text-4xl font-bold text-primary mb-2">8</div>
+          <div class="text-sm text-on-surface-variant">Countries sourced</div>
+        </div>
+        <div class="bg-surface-container rounded-xl p-6">
+          <div class="font-serif text-4xl font-bold text-primary mb-2">0</div>
+          <div class="text-sm text-on-surface-variant">Artificial additives</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: LOCATIONS ===================== -->
+<div id="page-locations" class="page pt-20">
+  <div class="max-w-[1440px] mx-auto px-6 md:px-12 py-16">
+    <div class="text-center mb-12">
+      <span class="badge text-secondary block mb-4">Find Us</span>
+      <h1 class="font-serif text-headline-xl text-primary mb-4">Our Locations</h1>
+      <p class="text-body-lg text-on-surface-variant max-w-xl mx-auto">Three beautiful spaces where you can experience L'Artisan Crème in person.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-surface-container-high">
+        <div class="h-52 bg-gradient-to-br from-[#f0e6d8] to-[#e0d0be] flex items-center justify-center">
+          <span class="text-7xl">🗼</span>
+        </div>
+        <div class="p-7">
+          <h3 class="font-serif text-headline-md text-primary mb-2">Le Marais, Paris</h3>
+          <p class="text-sm text-on-surface-variant mb-4">Our original flagship. The place where it all began, nestled between art galleries and bistros.</p>
+          <div class="space-y-2 text-sm text-on-surface-variant mb-6">
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px">location_on</span> 14 Rue de Bretagne, 75003</div>
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px">schedule</span> Daily, 10:00–22:00</div>
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px">phone</span> +33 1 42 71 00 00</div>
+          </div>
+          <button class="btn-primary w-full py-3 text-sm">Order Pickup</button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-surface-container-high">
+        <div class="h-52 bg-gradient-to-br from-[#d8e8f0] to-[#b8d4e0] flex items-center justify-center">
+          <span class="text-7xl">🌉</span>
+        </div>
+        <div class="p-7">
+          <h3 class="font-serif text-headline-md text-primary mb-2">SoHo, New York</h3>
+          <p class="text-sm text-on-surface-variant mb-4">Our American outpost, bringing Parisian artisan craft to the heart of downtown Manhattan.</p>
+          <div class="space-y-2 text-sm text-on-surface-variant mb-6">
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px">location_on</span> 82 Spring Street, NY 10012</div>
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px">schedule</span> Daily, 11:00–21:00</div>
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px">phone</span> +1 212 555 0182</div>
+          </div>
+          <button class="btn-primary w-full py-3 text-sm">Order Pickup</button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-surface-container-high">
+        <div class="h-52 bg-gradient-to-br from-[#e8f0d8] to-[#c8e0b0] flex items-center justify-center">
+          <span class="text-7xl">🎌</span>
+        </div>
+        <div class="p-7">
+          <h3 class="font-serif text-headline-md text-primary mb-2">Minami, Tokyo</h3>
+          <p class="text-sm text-on-surface-variant mb-4">A Japanese-inspired space blending French ice cream craft with the precision of Tokyo's food culture.</p>
+          <div class="space-y-2 text-sm text-on-surface-variant mb-6">
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px">location_on</span> 3-5 Minami-Aoyama, Minato</div>
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px">schedule</span> Daily, 11:00–22:00</div>
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px">phone</span> +81 3 5555 1234</div>
+          </div>
+          <button class="btn-primary w-full py-3 text-sm">Order Pickup</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-surface-container rounded-2xl p-8 text-center">
+      <h2 class="font-serif text-headline-md text-primary mb-4">Coming Soon: London & Sydney</h2>
+      <p class="text-on-surface-variant mb-6 max-w-xl mx-auto">We're expanding to Notting Hill and Surry Hills in 2025. Join our newsletter to be the first to know.</p>
+      <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+        <input type="email" placeholder="your@email.com" class="flex-1 border border-outline-variant rounded-full px-5 py-3 bg-white text-sm focus:outline-none focus:border-primary"/>
+        <button onclick="showToast('You\'re on the list! 🎉')" class="btn-primary px-8 py-3 text-sm shrink-0">Notify Me</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer id="main-footer" class="w-full mt-auto bg-[#FDFCF8] border-t border-[#3D2B1F]/10">
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 px-8 md:px-12 py-16 max-w-[1440px] mx-auto">
+    <div class="md:col-span-4">
+      <div class="font-serif text-2xl italic font-semibold text-primary mb-3">L'Artisan Crème</div>
+      <p class="text-sm text-on-surface-variant mb-6 max-w-xs">Handcrafted ice cream made with passion, precision, and the world's finest ingredients.</p>
+      <div class="flex gap-3">
+        <button class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors text-on-surface-variant">
+          <span class="material-symbols-outlined" style="font-size:16px">language</span>
+        </button>
+        <button class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors text-on-surface-variant">
+          <span class="material-symbols-outlined" style="font-size:16px">photo_camera</span>
+        </button>
+        <button class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors text-on-surface-variant">
+          <span class="material-symbols-outlined" style="font-size:16px">mail</span>
+        </button>
+      </div>
+    </div>
+    <div class="md:col-span-2 md:col-start-6">
+      <h4 class="font-semibold text-primary mb-4 badge uppercase">Explore</h4>
+      <div class="flex flex-col gap-3">
+        <button onclick="navigate('catalog')" class="text-sm text-on-surface-variant hover:text-primary transition-colors text-left">Catalog</button>
+        <button onclick="navigate('builder')" class="text-sm text-on-surface-variant hover:text-primary transition-colors text-left">Build a Sundae</button>
+        <button onclick="navigate('story')" class="text-sm text-on-surface-variant hover:text-primary transition-colors text-left">Our Story</button>
+        <button onclick="navigate('locations')" class="text-sm text-on-surface-variant hover:text-primary transition-colors text-left">Locations</button>
+      </div>
+    </div>
+    <div class="md:col-span-2">
+      <h4 class="font-semibold text-primary mb-4 badge uppercase">Company</h4>
+      <div class="flex flex-col gap-3">
+        <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Wholesale</a>
+        <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Careers</a>
+        <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Press</a>
+        <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Contact</a>
+      </div>
+    </div>
+    <div class="md:col-span-2">
+      <h4 class="font-semibold text-primary mb-4 badge uppercase">Legal</h4>
+      <div class="flex flex-col gap-3">
+        <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Privacy Policy</a>
+        <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Terms of Service</a>
+        <a href="#" class="text-sm text-on-surface-variant hover:text-primary transition-colors">Allergens</a>
+      </div>
+    </div>
+  </div>
+  <div class="border-t border-[#3D2B1F]/10 px-8 md:px-12 py-6 max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <p class="text-xs text-on-surface-variant">© 2024 L'Artisan Crème. Handcrafted with love.</p>
+    <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+      <span class="material-symbols-outlined" style="font-size:14px">lock</span>
+      Secure checkout · All transactions encrypted
+    </div>
+  </div>
+</footer>
+
+<script>
+// ======================== DATA ========================
+const products = [
+  { id:'vanilla', name:'Madagascar Vanilla Bean', price:6.50, category:'signature', badge:'Signature', color:'#f5e6c8', origin:'Madagascar', desc:'A transcendent vanilla experience. We source our beans directly from a sustainable cooperative in the Sava region — each pod hand-split and steeped for 72 hours in warm cream. The result is a scoop of incomparable depth: floral, warm, and impossibly rich.', notes:['Bourbon Vanilla','Warm Cream','Floral Honey','Light Caramel'], img:'https://lh3.googleusercontent.com/aida-public/AB6AXuDwJBEQWyuldkR0ppx3eyAx5CIZilyRjRm8KJKtiScyR-j29-kW_-A8PDK43xaywC75EgwQODQXJPHJwTX8CMDHdAZEFAzMx_gY8_0KMondnfaGolzKOFG1sUMeS2gGt1ZEKCB2THW4JLW2sqvY3_xe54mnYJB1DKYowRQNQMgrioHfOmQM8u8oQm52gyHeTx5Ov8p_cBPfwysdEOFe9y412AOj9rBJ5jqEudTuopkViymPTXOOfGLqDrdoi8mGOVVScVUDhM1vVRM' },
+  { id:'chocolate', name:'Valrhona Dark Chocolate', price:7.00, category:'classic', badge:'Bestseller', color:'#3b2518', origin:'France / Ivory Coast', desc:"Made with Valrhona's Guanaja 70% cacao, this is serious chocolate ice cream for serious chocolate lovers. Intense, bittersweet, and layered with notes of dried fruit and roasted espresso. No additives. Pure obsession.", notes:['70% Cacao','Espresso','Dried Cherry','Roasted Nut'], img:'https://lh3.googleusercontent.com/aida-public/AB6AXuDIPSl0bis_2zlvf6GeE7v8P02DLAnrsdTT2MnBkLMWHp5m7CiIHcPGC2Vdi4n3QUBNDyb0TKIMHAk0TtDhayIm8oKLTUlQw-XwrP9MPu9udza_9s0D_NYE_b3myrl78peV-Ne1c2Yfe49Q0zy8fbJRodKvSSR0tJBGLqgEacwwoTTkkddDXwk5SfSDFHJ1a3xrAFMdj3p9g_MBRWpnieLSzfNIa-hN2fo-VyNBTGVUaqB2p2TFrmtSGpbGquUP35BIJEIiK_-3ltY' },
+  { id:'strawberry', name:'Wild Strawberry', price:6.50, category:'seasonal', badge:'Seasonal', color:'#f8a0a8', origin:'Périgord, France', desc:'Made from wild gariguette strawberries harvested at peak season in the Dordogne valley. We roast half the berries to concentrate their sweetness before folding them into our cultured cream base. Sweet, jammy, and alive.', notes:['Wild Berry','Sweet Cream','Rose Petal','Citrus Zest'], img:'https://lh3.googleusercontent.com/aida-public/AB6AXuArN3odi0oq6gtGKvy1zn6Kzk9rLbdDr-C7jkZqe9gxwZ_25INPY17lOmDRR-DQ82GRup3SMyVXXWflM-q-HkbzeiuwftNy_cDCAT6v7FO7f41OwpASIeCx0QDNI2aX66-XeD_ZitWkDKeYlMyW4_Js-waeue3W8plUEGufTj0_jpFYRudsCO-Ay8x2dovu6YsGUqHiayKArDbSARlPPBaPsvjaq3wGBk7ToBgysTLuf2t0ymhxWv6oXvwuy7ynthnQVHs14mo48ZY' },
+  { id:'pistachio', name:'Sicilian Pistachio', price:7.50, category:'signature', badge:'Signature', color:'#7cb87a', origin:'Bronte, Sicily', desc:"Bronte pistachios — often called 'green gold' — come from a single grove on the slopes of Mount Etna. We stone-grind the nuts into a paste and fold it into our cream base, adding nothing but a whisper of fleur de sel. Earthy, complex, unforgettable.", notes:['Roasted Pistachio','Sea Salt','Honey','Green Grass'], img:null, emoji:'🌿' },
+  { id:'caramel', name:'Salted Caramel', price:6.50, category:'classic', badge:'Classic', color:'#d69f5c', origin:'Normandy, France', desc:'Made with cultured Normandy butter caramelised low and slow until it reaches a deep, amber toffee before we pour in warm cream and a generous pinch of Brittany fleur de sel. Sweet, salty, and completely irresistible.', notes:['Burnt Caramel','Fleur de Sel','Butterscotch','Cream'], img:null, emoji:'🍯' },
+  { id:'coconut', name:'Tahitian Coconut', price:6.50, category:'vegan', badge:'Vegan', color:'#c8e6a0', origin:'Tahiti', desc:'A 100% plant-based creation using fresh coconut cream from hand-pressed Tahitian coconuts. We add toasted coconut flakes for texture and a hint of lime zest for brightness. Tropical, refreshing, and surprisingly complex.', notes:['Coconut Cream','Toasted Flake','Lime Zest','Vanilla'], img:null, emoji:'🥥' },
+  { id:'lavender', name:'Provençal Lavender', price:7.00, category:'seasonal', badge:'Seasonal', color:'#c4b5e8', origin:'Provence, France', desc:'Culinary lavender harvested from the Lubéron hills, steeped gently in our cream base to extract a delicate floral perfume. Pale violet and dreamlike — this is ice cream as aromatherapy.', notes:['Fresh Lavender','Honey','Cream','Lemon'], img:null, emoji:'💜' },
+  { id:'matcha', name:'Ceremonial Matcha', price:7.50, category:'signature', badge:'Signature', color:'#7ab87a', origin:'Uji, Kyoto', desc:'We use first-flush ceremonial grade matcha from a single garden in Uji — the same grade used in Japanese tea ceremonies. Vibrant, grassy, and gently bitter against the rich cream base.', notes:['Ceremonial Matcha','Umami','Sweet Cream','Vegetal'], img:null, emoji:'🍵' },
+];
+
+// ======================== STATE ========================
+let cart = [];
+let currentProduct = null;
+let productQty = 1;
+let builderScoops = [];
+let builderSauce = null;
+let builderToppings = [];
+let currentPage = 'home';
+
+// ======================== NAVIGATION ========================
+function navigate(page, data) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  
+  const pageEl = document.getElementById('page-' + page);
+  if (!pageEl) return;
+  pageEl.classList.add('active');
+  currentPage = page;
+  
+  const activeLink = document.querySelector(`.nav-link[data-page="${page}"]`);
+  if (activeLink) activeLink.classList.add('active');
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (page === 'catalog') renderCatalog('all');
+  if (page === 'product' && data) loadProduct(data.id);
+  if (page === 'builder') updateBuilderReceipt();
+}
+
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const icon = document.getElementById('mobile-menu-icon');
+  menu.classList.toggle('hidden');
+  icon.textContent = menu.classList.contains('hidden') ? 'menu' : 'close';
+}
+
+// ======================== CATALOG ========================
+function renderCatalog(filter) {
+  const grid = document.getElementById('catalog-grid');
+  const items = filter === 'all' ? products : products.filter(p => p.category === filter);
+  
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    if (btn.dataset.filter === filter) {
+      btn.className = 'filter-chip btn-primary px-5 py-2 text-sm';
+    } else {
+      btn.className = 'filter-chip btn-outline px-5 py-2 text-sm';
+    }
+  });
+
+  grid.innerHTML = items.map((p,i) => `
+    <div class="flavor-card bg-white rounded-xl overflow-hidden cursor-pointer shadow-sm section-fade" style="animation-delay:${i*0.07}s" onclick="navigate('product',{id:'${p.id}'})">
+      <div class="aspect-[4/3] overflow-hidden bg-surface-container">
+        ${p.img
+          ? `<img src="${p.img}" alt="${p.name}" class="product-img w-full h-full object-cover"/>`
+          : `<div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, ${p.color}55 0%, ${p.color}99 100%)"><span style="font-size:80px">${p.emoji||'🍦'}</span></div>`
+        }
+      </div>
+      <div class="p-5">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-3 h-3 rounded-full inline-block border border-outline-variant/50" style="background:${p.color}"></span>
+          <span class="badge text-on-secondary-container bg-secondary-fixed px-2 py-0.5 rounded-full">${p.badge}</span>
+        </div>
+        <h3 class="font-serif text-xl font-semibold text-primary mb-1">${p.name}</h3>
+        <p class="text-sm text-on-surface-variant mb-4 line-clamp-2">${p.notes.slice(0,2).join(' · ')}</p>
+        <div class="flex items-center justify-between">
+          <span class="font-serif text-lg font-semibold text-primary">$${p.price.toFixed(2)}</span>
+          <button onclick="event.stopPropagation(); addToCart({id:'${p.id}',name:'${p.name}',price:${p.price},color:'${p.color}'})" class="btn-primary px-4 py-2 text-sm">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCatalog(filter) { renderCatalog(filter); }
+
+// ======================== PRODUCT ========================
+function loadProduct(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  currentProduct = p;
+  productQty = 1;
+
+  document.getElementById('product-breadcrumb').textContent = p.name;
+  document.getElementById('product-name').textContent = p.name;
+  document.getElementById('product-desc').textContent = p.desc;
+  document.getElementById('product-badge').textContent = p.badge;
+  document.getElementById('product-price').textContent = '$' + p.price.toFixed(2);
+  document.getElementById('product-origin').textContent = p.origin;
+  document.getElementById('product-qty').textContent = productQty;
+  document.getElementById('product-color-dot').style.background = p.color;
+
+  const mainImg = document.getElementById('product-main-img');
+  const thumb1 = document.getElementById('product-thumb-1');
+  const thumb2 = document.getElementById('product-thumb-2');
+  if (p.img) {
+    mainImg.src = p.img; mainImg.style.display='block';
+    thumb1.src = p.img; thumb2.src = p.img;
+  } else {
+    mainImg.src=''; mainImg.style.display='none';
+    thumb1.src=''; thumb2.src='';
+  }
+  document.getElementById('product-thumb-emoji').textContent = p.emoji || '🍦';
+
+  const notes = document.getElementById('product-notes');
+  notes.innerHTML = p.notes.map(n => `<span class="badge bg-secondary-fixed text-on-secondary-container px-3 py-1.5 rounded-full">${n}</span>`).join('');
+
+  // Related
+  const related = products.filter(x => x.id !== id).slice(0, 4);
+  document.getElementById('related-products').innerHTML = related.map(r => `
+    <div class="flavor-card bg-white rounded-xl overflow-hidden cursor-pointer shadow-sm" onclick="navigate('product',{id:'${r.id}'})">
+      <div class="aspect-square overflow-hidden bg-surface-container">
+        ${r.img ? `<img src="${r.img}" alt="${r.name}" class="product-img w-full h-full object-cover"/>` : `<div class="w-full h-full flex items-center justify-center" style="background:${r.color}55"><span style="font-size:50px">${r.emoji||'🍦'}</span></div>`}
+      </div>
+      <div class="p-4">
+        <h4 class="font-serif text-base font-semibold text-primary mb-1">${r.name}</h4>
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-semibold text-primary">$${r.price.toFixed(2)}</span>
+          <button onclick="event.stopPropagation(); addToCart({id:'${r.id}',name:'${r.name}',price:${r.price},color:'${r.color}'})" class="text-xs btn-primary px-3 py-1.5">Add</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function changeProductQty(delta) {
+  productQty = Math.max(1, Math.min(10, productQty + delta));
+  document.getElementById('product-qty').textContent = productQty;
+}
+
+function addCurrentProduct() {
+  if (!currentProduct) return;
+  for (let i = 0; i < productQty; i++) {
+    addToCart({ id: currentProduct.id, name: currentProduct.name, price: currentProduct.price, color: currentProduct.color });
+  }
+}
+
+// ======================== CART ========================
+function addToCart(item) {
+  const existing = cart.find(c => c.id === item.id);
+  if (existing) existing.qty++;
+  else cart.push({ ...item, qty: 1 });
+  updateCartUI();
+  showToast(`${item.name} added to cart 🍦`);
+}
+
+function clearCart() {
+  cart = [];
+  updateCartUI();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(c => c.id !== id);
+  updateCartUI();
+}
+
+function changeCartQty(id, delta) {
+  const item = cart.find(c => c.id === id);
+  if (!item) return;
+  item.qty = Math.max(0, item.qty + delta);
+  if (item.qty === 0) cart = cart.filter(c => c.id !== id);
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const total = cart.reduce((sum, c) => sum + c.price * c.qty, 0);
+  const count = cart.reduce((sum, c) => sum + c.qty, 0);
+  const badge = document.getElementById('cart-badge');
+  badge.textContent = count;
+  badge.classList.toggle('hidden', count === 0);
+  document.getElementById('cart-total').textContent = '$' + total.toFixed(2);
+
+  const itemsEl = document.getElementById('cart-items');
+  const emptyEl = document.getElementById('cart-empty');
+  const footerEl = document.getElementById('cart-footer');
+
+  if (cart.length === 0) {
+    emptyEl.classList.remove('hidden');
+    footerEl.classList.add('hidden');
+    itemsEl.innerHTML = '';
+    return;
+  }
+  emptyEl.classList.add('hidden');
+  footerEl.classList.remove('hidden');
+  itemsEl.innerHTML = cart.map(c => `
+    <div class="flex items-center gap-4 bg-surface-container rounded-xl p-4">
+      <div class="w-12 h-12 rounded-lg shrink-0 flex items-center justify-center text-2xl" style="background:${c.color}55">🍦</div>
+      <div class="flex-1 min-w-0">
+        <div class="font-semibold text-primary text-sm truncate">${c.name}</div>
+        <div class="text-xs text-on-surface-variant">$${c.price.toFixed(2)} each</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="changeCartQty('${c.id}',-1)" class="quantity-btn text-sm">−</button>
+        <span class="font-semibold text-primary text-sm w-5 text-center">${c.qty}</span>
+        <button onclick="changeCartQty('${c.id}',1)" class="quantity-btn text-sm">+</button>
+      </div>
+      <div class="font-semibold text-primary text-sm ml-2">$${(c.price*c.qty).toFixed(2)}</div>
+    </div>
+  `).join('');
+}
+
+function openCart() {
+  document.getElementById('cart-sidebar').classList.remove('translate-x-full');
+  document.getElementById('cart-overlay').classList.remove('hidden','opacity-0');
+  setTimeout(() => document.getElementById('cart-overlay').classList.add('opacity-100'), 10);
+}
+
+function closeCart() {
+  document.getElementById('cart-sidebar').classList.add('translate-x-full');
+  const overlay = document.getElementById('cart-overlay');
+  overlay.classList.remove('opacity-100');
+  setTimeout(() => overlay.classList.add('hidden','opacity-0'), 300);
+}
+
+// ======================== BUILDER ========================
+function toggleScoop(el, name, price, color) {
+  const already = builderScoops.find(s => s.name === name);
+  if (already) {
+    builderScoops = builderScoops.filter(s => s.name !== name);
+    el.classList.remove('selected');
+    el.style.borderColor = '';
+  } else if (builderScoops.length < 3) {
+    builderScoops.push({ name, price, color });
+    el.classList.add('selected');
+    el.style.borderColor = '#26170c';
+  } else {
+    showToast('Max 3 scoops allowed');
+  }
+  updateBuilderReceipt();
+}
+
+function selectSauce(el, name, price) {
+  document.querySelectorAll('.sauce-btn').forEach(b => { b.classList.remove('selected'); b.style.background=''; b.style.color=''; b.style.borderColor=''; });
+  if (name === 'None') { builderSauce = null; }
+  else { builderSauce = { name, price }; el.classList.add('selected'); }
+  updateBuilderReceipt();
+}
+
+function toggleTopping(el, name, price) {
+  const idx = builderToppings.findIndex(t => t.name === name);
+  if (idx > -1) { builderToppings.splice(idx,1); el.classList.remove('selected'); }
+  else { builderToppings.push({ name, price }); el.classList.add('selected'); }
+  updateBuilderReceipt();
+}
+
+function updateBuilderReceipt() {
+  const receipt = document.getElementById('builder-receipt');
+  const totalEl = document.getElementById('builder-total');
+  const tagsEl = document.getElementById('builder-tags');
+
+  let total = 0;
+  let lines = [];
+  let tags = [];
+
+  if (builderScoops.length > 0) {
+    const scoopTotal = builderScoops.reduce((s,x) => s + x.price, 0);
+    total += scoopTotal;
+    lines.push(`<div class="flex justify-between dotted-row pb-3"><span class="text-sm text-on-surface-variant">${builderScoops.map(s=>s.name).join(', ')}</span><span class="text-sm font-semibold text-primary">$${scoopTotal.toFixed(2)}</span></div>`);
+    tags.push(`<div class="self-start bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-outline-variant shadow-sm text-xs font-bold text-primary uppercase">${builderScoops.map(s=>s.name.split(' ')[0]).join(' + ')}</div>`);
+  }
+  if (builderSauce) {
+    total += builderSauce.price;
+    lines.push(`<div class="flex justify-between dotted-row pb-3"><span class="text-sm text-on-surface-variant">${builderSauce.name}</span><span class="text-sm font-semibold text-primary">+$${builderSauce.price.toFixed(2)}</span></div>`);
+    tags.push(`<div class="self-end bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-outline-variant shadow-sm text-xs font-bold text-primary uppercase">${builderSauce.name}</div>`);
+  }
+  if (builderToppings.length > 0) {
+    const toppingTotal = builderToppings.reduce((s,t) => s + t.price, 0);
+    total += toppingTotal;
+    lines.push(`<div class="flex justify-between pb-3"><span class="text-sm text-on-surface-variant">${builderToppings.map(t=>t.name).join(', ')}</span><span class="text-sm font-semibold text-primary">+$${toppingTotal.toFixed(2)}</span></div>`);
+    tags.push(`<div class="self-start bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full border border-outline-variant shadow-sm text-xs font-bold text-primary uppercase mt-auto">${builderToppings.map(t=>t.name.split(' ')[0]).join(' · ')}</div>`);
+  }
+
+  receipt.innerHTML = lines.length ? lines.join('') : '<p class="text-sm text-on-surface-variant text-center italic">Select your scoops to begin...</p>';
+  totalEl.textContent = '$' + total.toFixed(2);
+  tagsEl.innerHTML = tags.join('');
+}
+
+function addSundaeToCart() {
+  if (builderScoops.length === 0) { showToast('Please choose at least one scoop!'); return; }
+  const name = `Custom Sundae (${builderScoops.map(s=>s.name.split(' ')[0]).join('+')}${builderSauce?'+'+builderSauce.name:''}${builderToppings.length?'+Toppings':''})`;
+  const price = builderScoops.reduce((s,x)=>s+x.price,0) + (builderSauce?.price||0) + builderToppings.reduce((s,t)=>s+t.price,0);
+  cart.push({ id: 'sundae-' + Date.now(), name, price, qty: 1, color: builderScoops[0]?.color || '#f5e6c8' });
+  updateCartUI();
+  showToast('Your sundae is in the cart! 🍨');
+  // Reset
+  builderScoops = []; builderSauce = null; builderToppings = [];
+  document.querySelectorAll('.flavor-card').forEach(c => { c.classList.remove('selected'); c.style.borderColor=''; });
+  document.querySelectorAll('.sauce-btn').forEach(b => { b.classList.remove('selected'); b.style.background=''; b.style.color=''; });
+  document.querySelectorAll('.topping-btn').forEach(b => b.classList.remove('selected'));
+  updateBuilderReceipt();
+}
+
+// ======================== TOAST ========================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.style.opacity = '0', 2500);
+}
+
+// ======================== INIT ========================
+updateCartUI();
+</script>
+</body>
+</html>
